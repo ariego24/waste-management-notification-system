@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js" defer></script>
     <link rel="manifest" href="manifest.json">
+
 </head>
 <body>
     <header>
@@ -16,20 +17,51 @@
 
     <main>
         <div class="container">
-            <section class="announcements">
-                <h2>Latest Announcements</h2>
-                <p id="latestAnnouncement">No announcement available.</p>
-            </section>
+            <div class="row">
+                <section class="announcements">
+                    <h2>Latest Announcements</h2>
+                    <textarea id="announcementText" placeholder="Write your announcement here..." rows="5"></textarea>
+                </section>
 
-            <section class="notification-section">
-                <h3>Notification Message</h3>
-                <p id="notificationMessage">No notification message available.</p>
-            </section>
+                <section class="notification-section">
+                    <h3>Select a Notification Message</h3>
+                    <select id="notificationSelect" onchange="previewMessage()">
+                        <option value="">Select a notification message</option>
+                        <option value="Tomorrow at 6 AM the garbage truck will arrive.">Tomorrow at 6 AM the garbage truck will arrive.</option>
+                        <option value="Please remember to separate your recyclables from the general waste.">Please remember to separate your recyclables from the general waste.</option>
+                        <option value="Garbage collection will be delayed due to weather conditions.">Garbage collection will be delayed due to weather conditions.</option>
+                        <option value="Next week's garbage collection will be on Tuesday instead of Monday.">Next week's garbage collection will be on Tuesday instead of Monday.</option>
+                        <option value="Don’t forget to put your bins out by 6 AM on collection days!">Don’t forget to put your bins out by 6 AM on collection days!</option>
+                        <option value="Join us this Saturday for a community clean-up event at the park.">Join us this Saturday for a community clean-up event at the park.</option>
+                        <option value="Please ensure all waste is properly bagged and secured.">Please ensure all waste is properly bagged and secured.</option>
+                        <option value="Recycling bins are available for collection every Wednesday.">Recycling bins are available for collection every Wednesday.</option>
+                        <option value="Help keep our community clean by disposing of waste responsibly.">Help keep our community clean by disposing of waste responsibly.</option>
+                        <option value="New recycling guidelines are now in effect. Check our website for details.">New recycling guidelines are now in effect. Check our website for details.</option>
+                    </select>
+                    <div id="messagePreview">
+                        <h4>Preview:</h4>
+                        <p id="previewText">No message selected.</p>
+                    </div>
+                </section>
 
-            <section class="schedule-display">
-                <h2>Schedule for Accessible Waste Management</h2>
-                <p id="scheduleInfo">No schedule available.</p>
-            </section>
+                <section class="schedule-display">
+                    <h2>Select Schedule for Accessible Waste Management</h2>
+                    <select id="daySelect" onchange="showSchedule()">
+                        <option value="">Select a day</option>
+                        <option value="Monday">Monday</option>
+                        <option value="Tuesday">Tuesday</option>
+                        <option value="Wednesday">Wednesday</option>
+                        <option value="Thursday">Thursday</option>
+                        <option value="Friday">Friday</option>
+                        <option value="Saturday">Saturday</option>
+                        <option value="Sunday">Sunday</option>
+                    </select>
+                    <div id="selected-schedule" style="display: none;">
+                        <h4>Schedule for <span id="selectedDay"></span>:</h4>
+                        <p id="scheduleTimes"></p>
+                    </div>
+                </section>
+            </div>
 
             <section class="feedback">
                 <h2>Feedback</h2>
@@ -45,6 +77,29 @@
                     <li><a href="#hazardous-disposal">Hazardous Waste Disposal</a></li>
                 </ul>
             </section>
+
+            <section class="upcoming-events">
+                <h2>Upcoming Special Collections</h2>
+                <ul>
+                    <li>E-Waste Collection: December 15, 2024</li>
+                    <li>Bulk Waste Collection: December 22, 2024</li>
+                </ul>
+            </section>
+
+            <section class="summary">
+                <h2>Summary of Information</h2>
+                <div id="summary-display" style="display: none;">
+                    <h4>Latest Announcement:</h4>
+                    <p id="summary-announcement"></p>
+                    
+                    <h4>Selected Notification Message:</h4>
+                    <p id="summary-notification"></p>
+                    
+                    <h4>Selected Schedule:</h4>
+                    <p id="summary-schedule"></p>
+                </div>
+                <button id="send-info-btn" style="display: none;" onclick="sendInfo()">Send Information</button>
+            </section>
         </div>
     </main>
 
@@ -54,3 +109,6 @@
     </footer>
 </body>
 </html>
+<section class="save-section">
+    <button id="save-button" onclick="saveData()">Save Changes</button>
+</section>
