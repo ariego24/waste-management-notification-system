@@ -1,3 +1,6 @@
+let records = [];
+let totalWaste = 0;
+
 function previewMessage() {
     const select = document.getElementById('notificationSelect');
     const previewText = document.getElementById('previewText');
@@ -44,6 +47,67 @@ function sendInfo() {
     document.getElementById('summary-display').style.display = 'block';
     document.getElementById('send-info-btn').style.display = 'block';
 }
+
+// New function to add waste records
+function addWasteRecord() {
+    const wasteType = document.getElementById("wasteType").value;
+    const recyclableMaterials = Array.from(document.getElementById("recyclableMaterial").selectedOptions)
+                                     .map(option => option.value);
+    const quantity = parseFloat(document.getElementById("quantity").value) || 0;
+    const location = document.getElementById("location").value;
+    const pickupTime = document.getElementById("pickupTime").value;
+
+    if (wasteType && location && pickupTime && (wasteType !== "Recyclable" || recyclableMaterials.length > 0)) {
+        const record = { wasteType, recyclableMaterials, quantity, location, pickupTime };
+        
+        // Send the new record to the server
+        fetch('/add-record', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(record)
+        })
+        .then(response => response.json())
+        .then(data => {
+            records.push(data); // Assuming the server returns the saved record
+            totalWaste += quantity;
+            updateRecordsTable();
+            updateAnalytics();
+            document.getElementById("wasteForm").reset();
+            document.getElementById("recyclableInfo").style.display = "none";
+        })
+        .catch(error => console.error('Error adding record:', error));
+    } else {
+        alert("Please fill all fields before submitting.");
+    }
+}
+
+function updateRecordsTable() {
+    const tableBody = document.querySelector("#recordsTable tbody");
+    tableBody.innerHTML = "";
+    records.forEach((record, index) => {
+        const materials = record.wasteType === "Recyclable" ? record.recyclableMaterials.join(", ") : "N/A";
+        const row = `<tr>
+            <td>${index + 1}</td>
+            <td>${record.wasteType}</td>
+            <td>${materials}</td>
+            <td>${record.quantity} kg</td>
+            <td>${record.location}</td>
+            <td>${new Date(record.pickupTime).toLocaleString()}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+    });
+
+    if (records.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No records available.</td></tr>';
+    }
+}
+
+function updateAnalytics() {
+    document.getElementById("totalWaste").innerText = totalWaste;
+}
+
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
         navigator.serviceWorker.register("service-worker.js")
