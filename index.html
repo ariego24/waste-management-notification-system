@@ -1,240 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="style.css">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Waste Management System</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: #f8f9fa;
-    }
-    header {
-      background-color: #007bff;
-      color: white;
-      text-align: center;
-      padding: 20px;
-    }
-    header h1 {
-      margin: 0;
-    }
-    nav {
-      background-color: #343a40;
-      display: flex;
-      justify-content: center;
-      padding: 10px 0;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 0 15px;
-      font-weight: bold;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 20px auto;
-      padding: 20px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-    .form-section, .records-section, .guide-section, .analytics-section, .feedback-section {
-      margin-bottom: 20px;
-    }
-    .form-section h2, .records-section h2, .guide-section h2, .analytics-section h2, .feedback-section h2 {
-      color: #007bff;
-      border-bottom: 2px solid #007bff;
-      display: inline-block;
-      margin-bottom: 10px;
-    }
-    .form-section form input, .form-section form select, .form-section form button, .form-section form textarea {
-      display: block;
-      margin: 10px 0;
-      padding: 10px;
-      width: 100%;
-      max-width: 400px;
-      font-size: 1rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-    table, th, td {
-      border: 1px solid #ddd;
-    }
-    th, td {
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #007bff;
-      color: white;
-    }
-    footer {
-      text-align: center;
-      background: #007bff;
-      color: white;
-      padding: 15px 0;
-      margin-top: 20px;
-    }
-    @media (max-width: 600px) {
-      nav {
-        flex-direction: column;
-      }
-      table {
-        font-size: 0.9rem;
-      }
-    }
-  </style>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        header h1 {
+            margin: 0;
+        }
+        nav {
+            background-color: #343a40;
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        /* Add your existing CSS styles here */
+        footer {
+            text-align: center;
+            background: #007bff;
+            color: white;
+            padding: 15px 0;
+            margin-top: 20px;
+        }
+    </style>
 </head>
-<body>
-  <header>
-    <h1>Waste Management System</h1>
-    <p>Efficient tracking and segregation of waste.</p>
-  </header>
-  
-  <nav>
-    <a href="#add-waste">Add Waste</a>
-    <a href="#records">View Records</a>
-    <a href="#guide">Guide</a>
-    <a href="#analytics">Analytics</a>
-    <a href="#feedback">Feedback</a>
-  </nav>
+<body onload="checkAuthentication()">
+    <header>
+        <h1>EcoTrack</h1>
+        <p>Accessible Waste Management and Segregation System for Southville 3, Poblacion, Muntinlupa City.</p>
+    </header>
 
-  <div class="container">
-    <!-- Add Waste Section -->
-    <section class="form-section" id="add-waste">
-      <h2>Add Waste Record</h2>
-      <form id="wasteForm">
-        <select name="wasteType" id="wasteType" required>
-          <option value="">Select Waste Type</option>
-          <option value="Organic">Organic</option>
-          <option value="Recyclable">Recyclable</option>
-          <option value="Hazardous">Hazardous</option>
-          <option value="General">General</option>
-        </select>
-        <input type="number" name="quantity" id="quantity" placeholder="Quantity (kg)" required>
-        <input type="text" name="location" id="location" placeholder="Location" required>
-        <input type="datetime-local" name="pickupTime" id="pickupTime" required>
-        <button type="button" onclick="addWasteRecord()">Add Record</button>
-      </form>
-    </section>
+    <nav>
+        <a href="#add-waste">Add Waste</a>
+        <a href="#records">View Records</a>
+        <a href="#guide">Guide</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#feedback">Feedback</a>
+        <a href="#" onclick="logout()">Logout</a> <!-- Add a logout option -->
+    </nav>
 
-    <!-- Waste Records Section -->
-    <section class="records-section" id="records">
-      <h2>Waste Records</h2>
-      <input type="text" id="searchBar" placeholder="Search records..." onkeyup="filterRecords()">
-      <table id="recordsTable">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Type</th>
-            <th>Quantity (kg)</th>
-            <th>Location</th>
-            <th>Pickup Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="5" style="text-align: center;">No records available.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <div class="container" id="mainContent" style="display: none;">
+        <!-- Add Waste Section -->
+        <section class="form-section" id="add-waste">
+            <h2>Add Waste Record</h2>
+            <form id="wasteForm">
+                <select name="wasteType" id="wasteType" required>
+                    <option value="">Select Waste Type</option>
+                    <option value="Organic">Organic</option>
+                    <option value="Recyclable">Recyclable</option>
+                    <option value="Hazardous">Hazardous</option>
+                    <option value="General">General</option>
+                </select>
+                <input type="number" name="quantity" id="quantity" placeholder="Quantity (kg)" required>
+                <input type="text" name="location" id="location" placeholder="Location" required>
+                <input type="datetime-local" name="pickupTime" id="pickupTime" required>
+                <button type="button" onclick="addWasteRecord()">Add Record</button>
+            </form>
+        </section>
 
-    <!-- Guide Section -->
-    <section class="guide-section" id="guide">
-      <h2>Waste Segregation Guide</h2>
-      <p>Learn how to segregate your waste properly:</p>
-      <ul>
-        <li><strong>Organic:</strong> Food scraps, plant waste, etc.</li>
-        <li><strong>Recyclable:</strong> Paper, plastics, metals, etc.</li>
-        <li><strong>Hazardous:</strong> Batteries, chemicals, etc.</li>
-        <li><strong>General:</strong> Non-recyclable items.</li>
-      </ul>
-    </section>
+        <!-- Waste Records Section -->
+        <section class="records-section" id="records">
+            <h2>Waste Records</h2>
+            <input type="text" id="searchBar" placeholder="Search records..." onkeyup="filterRecords()">
+            <table id="recordsTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Quantity (kg)</th>
+                        <th>Location</th>
+                        <th>Pickup Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center;">No records available.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-    <!-- Analytics Section -->
-    <section class="analytics-section" id="analytics">
-      <h2>Analytics</h2>
-      <p>Total Waste Collected: <span id="totalWaste">0</span> kg</p>
-    </section>
+        <!-- Guide Section -->
+        <section class="guide-section" id="guide">
+            <h2>Waste Segregation Guide</h2>
+            <p>Learn how to segregate your waste properly:</p>
+            <ul>
+                <li><strong>Organic:</strong> Food scraps, plant waste, etc.</li>
+                <li><strong>Recyclable:</strong> Paper, plastics, metals, etc.</li>
+                <li><strong>Hazardous:</strong> Batteries, chemicals, etc.</li>
+                <li><strong>General:</strong> Non-recyclable items.</li>
+            </ul>
+        </section>
 
-    <!-- Feedback Section -->
-    <section class="feedback-section" id="feedback">
-      <h2>Feedback</h2>
-      <textarea placeholder="Share your feedback..." rows="4"></textarea>
-      <button type="button" onclick="submitFeedback()">Submit</button>
-    </section>
-  </div>
+        <!-- Analytics Section -->
+        <section class="analytics-section" id="analytics">
+            <h2>Analytics</h2>
+            <p>Total Waste Collected: <span id="totalWaste">0</span> kg</p>
+        </section>
 
-  <footer>
-    <p>&copy; 2024 Waste Management System. All Rights Reserved.</p>
-  </footer>
+        <!-- Feedback Section -->
+        <section class="feedback-section" id="feedback">
+            <h2>Feedback</h2>
+            <textarea placeholder="Share your feedback..." rows="4"></textarea>
+            <button type="button" onclick="submitFeedback()">Submit</button>
+        </section>
+    </div>
 
-  <script>
-    let records = [];
-    let totalWaste = 0;
+    <div id="loginPrompt" style="text-align: center; display: none;">
+        <h2>Please log in to access the system.</h2>
+        <a href="login.html">Go to Login</a>
+    </div>
 
-    function addWasteRecord() {
-      const wasteType = document.getElementById("wasteType").value;
-      const quantity = parseFloat(document.getElementById("quantity").value);
-      const location = document.getElementById("location").value;
-      const pickupTime = document.getElementById("pickupTime").value;
+    <footer>
+        <p>&copy; 2024 Waste Management System. All Rights Reserved.</p>
+    </footer>
 
-      if (wasteType && quantity && location && pickupTime) {
-        records.push({ wasteType, quantity, location, pickupTime });
-        totalWaste += quantity;
-        updateRecordsTable();
-        updateAnalytics();
-        document.getElementById("wasteForm").reset();
-      } else {
-        alert("Please fill all fields before submitting.");
-      }
-    }
+    <script>
+        let records = [];
+        let totalWaste = 0;
 
-    function updateRecordsTable() {
-      const tableBody = document.querySelector("#recordsTable tbody");
-      tableBody.innerHTML = "";
-      records.forEach((record, index) => {
-        const row = `<tr>
-          <td>${index + 1}</td>
-          <td>${record.wasteType}</td>
-          <td>${record.quantity} kg</td>
-          <td>${record.location}</td>
-          <td>${new Date(record.pickupTime).toLocaleString()}</td>
-        </tr>`;
-        tableBody.innerHTML += row;
-      });
+        function checkAuthentication() {
+            const isAuthenticated = window.localStorage.getItem("authenticated");
+            if (isAuthenticated === "true") {
+                document.getElementById("mainContent").style.display = "block"; // Show main content
+            } else {
+                document.getElementById("loginPrompt").style.display = "block"; // Show login prompt
+            }
+        }
 
-      if (records.length === 0) {
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No records available.</td></tr>';
-      }
-    }
+        function logout() {
+            window.localStorage.removeItem("authenticated");
+            window.location.href = "login.html"; // Redirect to login page
+        }
 
-    function updateAnalytics() {
-      document.getElementById("totalWaste").innerText = totalWaste;
-    }
+        function addWasteRecord() {
+            const wasteType = document.getElementById("wasteType").value;
+            const quantity = parseFloat(document.getElementById("quantity").value);
+            const location = document.getElementById("location").value;
+            const pickupTime = document.getElementById("pickupTime").value;
 
-    function filterRecords() {
-      const query = document.getElementById("searchBar").value.toLowerCase();
-      const tableRows = document.querySelectorAll("#recordsTable tbody tr");
-      tableRows.forEach(row => {
-        const rowText = row.innerText.toLowerCase();
-        row.style.display = rowText.includes(query) ? "" : "none";
-      });
-    }
+            if (wasteType && quantity && location && pickupTime) {
+                records.push({ wasteType, quantity, location, pickupTime });
+                totalWaste += quantity;
+                updateRecordsTable();
+                updateAnalytics();
+                document.getElementById("wasteForm").reset();
+            } else {
+                alert("Please fill all fields before submitting.");
+            }
+        }
 
-    function submitFeedback() {
-      alert("Thank you for your feedback!");
-    }
-  </script>
+        function updateRecordsTable() {
+            const tableBody = document.querySelector("#recordsTable tbody");
+            tableBody.innerHTML = "";
+            records.forEach((record, index) => {
+                const row = `<tr>
+                    <td>${index + 1}</td>
+                    <td>${record.wasteType}</td>
+                    <td>${record.quantity} kg</td>
+                    <td>${record.location}</td>
+                    <td>${new Date(record.pickupTime).toLocaleString()}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+
+            if (records.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No records available.</td></tr>';
+            }
+        }
+
+        function updateAnalytics() {
+            document.getElementById("totalWaste").innerText = totalWaste;
+        }
+
+        function filterRecords() {
+            const query = document.getElementById("searchBar").value.toLowerCase();
+            const tableRows = document.querySelectorAll("#recordsTable tbody tr");
+            tableRows.forEach(row => {
+                const rowText = row.innerText.toLowerCase();
+                row.style.display = rowText.includes(query) ? "" : "none";
+            });
+        }
+
+        function submitFeedback() {
+            alert("Thank you for your feedback!");
+        }
+    </script>
 </body>
 </html>
