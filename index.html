@@ -51,6 +51,10 @@
             padding: 15px 0;
             margin-top: 20px;
         }
+        .recyclable-info {
+            display: none; /* Initially hide the recyclable type selection */
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body onload="checkAuthentication()">
@@ -73,13 +77,25 @@
         <section class="form-section" id="add-waste">
             <h2>Add Waste Record</h2>
             <form id="wasteForm">
-                <select name="wasteType" id="wasteType" required>
+                <select name="wasteType" id="wasteType" required onchange="showRecyclableInfo()">
                     <option value="">Select Waste Type</option>
                     <option value="Organic">Organic</option>
                     <option value="Recyclable">Recyclable</option>
                     <option value="Hazardous">Hazardous</option>
                     <option value="General">General</option>
                 </select>
+
+                <!-- Recyclable Material Selection -->
+                <div id="recyclableInfo" class="recyclable-info">
+                    <label for="recyclableMaterial">Select Recyclable Materials:</label>
+                    <select name="recyclableMaterial" id="recyclableMaterial" multiple>
+                        <option value="Plastic">Plastic</option>
+                        <option value="Paper">Paper</option>
+                        <option value="Metal">Metal</option>
+                        <option value="Glass">Glass</option>
+                    </select>
+                </div>
+
                 <input type="number" name="quantity" id="quantity" placeholder="Quantity (kg)" min="0">
                 <input type="text" name="location" id="location" placeholder="Location" required>
                 <input type="datetime-local" name="pickupTime" id="pickupTime" required>
@@ -96,6 +112,7 @@
                     <tr>
                         <th>#</th>
                         <th>Type</th>
+                        <th>Materials</th>
                         <th>Quantity (kg)</th>
                         <th>Location</th>
                         <th>Pickup Time</th>
@@ -103,7 +120,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td colspan="5" style="text-align: center;">No records available.</td>
+                        <td colspan="6" style="text-align: center;">No records available.</td>
                     </tr>
                 </tbody>
             </table>
@@ -164,17 +181,21 @@
 
         function addWasteRecord() {
             const wasteType = document.getElementById("wasteType").value;
+            const recyclableMaterials = Array.from(document.getElementById("recyclableMaterial").selectedOptions)
+                                             .map(option => option.value); // Get selected recyclable materials
             const quantityInput = document.getElementById("quantity").value; // Get the quantity input
             const quantity = quantityInput ? parseFloat(quantityInput) : 0; // Allow empty input, default to 0
             const location = document.getElementById("location").value;
             const pickupTime = document.getElementById("pickupTime").value;
 
-            if (wasteType && location && pickupTime) {
-                records.push({ wasteType, quantity, location, pickupTime });
+            if (wasteType && location && pickupTime && (wasteType !== "Recyclable" || recyclableMaterials.length > 0)) {
+                // Ensure at least one recyclable material is selected if waste type is "Recyclable"
+                records.push({ wasteType, recyclableMaterials, quantity, location, pickupTime });
                 totalWaste += quantity;
                 updateRecordsTable();
                 updateAnalytics();
                 document.getElementById("wasteForm").reset();
+                document.getElementById("recyclableInfo").style.display = "none"; // Hide info after submission
             } else {
                 alert("Please fill all fields before submitting.");
             }
@@ -184,9 +205,11 @@
             const tableBody = document.querySelector("#recordsTable tbody");
             tableBody.innerHTML = "";
             records.forEach((record, index) => {
+                const materials = record.wasteType === "Recyclable" ? record.recyclableMaterials.join(", ") : "N/A"; // Join selected materials
                 const row = `<tr>
                     <td>${index + 1}</td>
                     <td>${record.wasteType}</td>
+                    <td>${materials}</td>
                     <td>${record.quantity} kg</td>
                     <td>${record.location}</td>
                     <td>${new Date(record.pickupTime).toLocaleString()}</td>
@@ -195,12 +218,17 @@
             });
 
             if (records.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No records available.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No records available.</td></tr>';
             }
         }
 
         function updateAnalytics() {
             document.getElementById("totalWaste").innerText = totalWaste;
+        }
+
+        function showRecyclableInfo() {
+            const wasteType = document.getElementById("wasteType").value;
+            document.getElementById("recyclableInfo").style.display = wasteType === "Recyclable" ? "block" : "none";
         }
 
         function filterRecords() {
