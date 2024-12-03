@@ -1,114 +1,177 @@
-<!DOCTYPE html>
+\\\<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Accessible Waste Management & Recycling Notification System</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
-    <link rel="manifest" href="manifest.json">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waste Management System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+    }
+    header {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    header h1 {
+      margin: 0;
+    }
+    nav {
+      background-color: #343a40;
+      display: flex;
+      justify-content: center;
+      padding: 10px 0;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .form-section, .records-section {
+      margin-bottom: 20px;
+    }
+    .form-section h2, .records-section h2 {
+      color: #007bff;
+      border-bottom: 2px solid #007bff;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    .form-section form input, .form-section form select, .form-section form button {
+      display: block;
+      margin: 10px 0;
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+      font-size: 1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+    footer {
+      text-align: center;
+      background: #007bff;
+      color: white;
+      padding: 15px 0;
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Southville 3 Poblacion Muntinlupa City</h1>
-        <p>Accessible Waste Management & Recycling Notification System</p>
-    </header>
+  <header>
+    <h1>Waste Management System</h1>
+    <p>Efficient tracking and segregation of waste.</p>
+  </header>
+  
+  <nav>
+    <a href="#add-waste">Add Waste</a>
+    <a href="#records">View Records</a>
+    <a href="#about">About</a>
+  </nav>
 
-    <main>
-        <div class="container">
-            <div class="row">
-                <section class="announcements">
-                    <h2>Latest Announcements</h2>
-                    <textarea id="announcementText" placeholder="Write your announcement here..." rows="5"></textarea>
-                </section>
+  <div class="container">
+    <section class="form-section" id="add-waste">
+      <h2>Add Waste Record</h2>
+      <form id="wasteForm">
+        <select name="wasteType" id="wasteType" required>
+          <option value="">Select Waste Type</option>
+          <option value="Organic">Organic</option>
+          <option value="Recyclable">Recyclable</option>
+          <option value="Hazardous">Hazardous</option>
+          <option value="General">General</option>
+        </select>
+        <input type="number" name="quantity" id="quantity" placeholder="Quantity (kg)" required>
+        <input type="text" name="location" id="location" placeholder="Location" required>
+        <button type="button" onclick="addWasteRecord()">Add Record</button>
+      </form>
+    </section>
 
-                <section class="notification-section">
-                    <h3>Select a Notification Message</h3>
-                    <select id="notificationSelect" onchange="previewMessage()">
-                        <option value="">Select a notification message</option>
-                        <option value="Tomorrow at 6 AM the garbage truck will arrive.">Tomorrow at 6 AM the garbage truck will arrive.</option>
-                        <option value="Please remember to separate your recyclables from the general waste.">Please remember to separate your recyclables from the general waste.</option>
-                        <option value="Garbage collection will be delayed due to weather conditions.">Garbage collection will be delayed due to weather conditions.</option>
-                        <option value="Next week's garbage collection will be on Tuesday instead of Monday.">Next week's garbage collection will be on Tuesday instead of Monday.</option>
-                        <option value="Don’t forget to put your bins out by 6 AM on collection days!">Don’t forget to put your bins out by 6 AM on collection days!</option>
-                        <option value="Join us this Saturday for a community clean-up event at the park.">Join us this Saturday for a community clean-up event at the park.</option>
-                        <option value="Please ensure all waste is properly bagged and secured.">Please ensure all waste is properly bagged and secured.</option>
-                        <option value="Recycling bins are available for collection every Wednesday.">Recycling bins are available for collection every Wednesday.</option>
-                        <option value="Help keep our community clean by disposing of waste responsibly.">Help keep our community clean by disposing of waste responsibly.</option>
-                        <option value="New recycling guidelines are now in effect. Check our website for details.">New recycling guidelines are now in effect. Check our website for details.</option>
-                    </select>
-                    <div id="messagePreview">
-                        <h4>Preview:</h4>
-                        <p id="previewText">No message selected.</p>
-                    </div>
-                </section>
+    <section class="records-section" id="records">
+      <h2>Waste Records</h2>
+      <table id="recordsTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Type</th>
+            <th>Quantity (kg)</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="4" style="text-align: center;">No records available.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </div>
 
-                <section class="schedule-display">
-                    <h2>Select Schedule for Accessible Waste Management</h2>
-                    <select id="daySelect" onchange="showSchedule()">
-                        <option value="">Select a day</option>
-                        <option value="Monday">Monday</option>
-                        <option value="Tuesday">Tuesday</option>
-                        <option value="Wednesday">Wednesday</option>
-                        <option value="Thursday">Thursday</option>
-                        <option value="Friday">Friday</option>
-                        <option value="Saturday">Saturday</option>
-                        <option value="Sunday">Sunday</option>
-                    </select>
-                    <div id="selected-schedule" style="display: none;">
-                        <h4>Schedule for <span id="selectedDay"></span>:</h4>
-                        <p id="scheduleTimes"></p>
-                    </div>
-                </section>
-            </div>
+  <footer>
+    <p>&copy; 2024 Waste Management System. All Rights Reserved.</p>
+  </footer>
 
-            <section class="feedback">
-                <h2>Feedback</h2>
-                <textarea id="feedbackText" placeholder="Leave your feedback or report an issue here..." rows="5"></textarea>
-                <button onclick="submitFeedback()">Submit Feedback</button>
-            </section>
+  <script>
+    let records = [];
+    
+    function addWasteRecord() {
+      const wasteType = document.getElementById("wasteType").value;
+      const quantity = document.getElementById("quantity").value;
+      const location = document.getElementById("location").value;
 
-            <section class="resources">
-                <h2>Educational Resources</h2>
-                <ul>
-                    <li><a href="#waste-segregation">Waste Segregation Tips</a></li>
-                    <li><a href="#recycling-guide">Recycling Guide</a></li>
-                    <li><a href="#hazardous-disposal">Hazardous Waste Disposal</a></li>
-                </ul>
-            </section>
+      if (wasteType && quantity && location) {
+        records.push({ wasteType, quantity, location });
+        updateRecordsTable();
+        document.getElementById("wasteForm").reset();
+      } else {
+        alert("Please fill all fields before submitting.");
+      }
+    }
 
-            <section class="upcoming-events">
-                <h2>Upcoming Special Collections</h2>
-                <ul>
-                    <li>E-Waste Collection: December 15, 2024</li>
-                    <li>Bulk Waste Collection: December 22, 2024</li>
-                </ul>
-            </section>
+    function updateRecordsTable() {
+      const tableBody = document.querySelector("#recordsTable tbody");
+      tableBody.innerHTML = "";
+      records.forEach((record, index) => {
+        const row = `<tr>
+          <td>${index + 1}</td>
+          <td>${record.wasteType}</td>
+          <td>${record.quantity} kg</td>
+          <td>${record.location}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+      });
 
-            <section class="summary">
-                <h2>Summary of Information</h2>
-                <div id="summary-display" style="display: none;">
-                    <h4>Latest Announcement:</h4>
-                    <p id="summary-announcement"></p>
-                    
-                    <h4>Selected Notification Message:</h4>
-                    <p id="summary-notification"></p>
-                    
-                    <h4>Selected Schedule:</h4>
-                    <p id="summary-schedule"></p>
-                </div>
-                <button id="send-info-btn" style="display: none;" onclick="sendInfo()">Send Information</button>
-            </section>
-        </div>
-    </main>
-
-    <footer>
-        <p>&copy; 2024 Southville 3 Poblacion, Muntinlupa City</p>
-        <p>Contact Us: <a href="mailto:your-email@example.com">your-email@example.com</a></p>
-    </footer>
+      if (records.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">No records available.</td></tr>';
+      }
+    }
+  </script>
 </body>
 </html>
-<section class="save-section">
-    <button id="save-button" onclick="saveData()">Save Changes</button>
-</section>
