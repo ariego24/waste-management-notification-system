@@ -44,7 +44,6 @@
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        /* Add your existing CSS styles here */
         footer {
             text-align: center;
             background: #007bff;
@@ -66,7 +65,7 @@
         <a href="#guide">Guide</a>
         <a href="#analytics">Analytics</a>
         <a href="#feedback">Feedback</a>
-        <a href="#" onclick="logout()">Logout</a> <!-- Add a logout option -->
+        <a href="#" onclick="logout()">Logout</a>
     </nav>
 
     <div class="container" id="mainContent" style="display: none;">
@@ -81,7 +80,7 @@
                     <option value="Hazardous">Hazardous</option>
                     <option value="General">General</option>
                 </select>
-                <input type="number" name="quantity" id="quantity" placeholder="Quantity (kg)" required>
+                <input type="number" name="quantity" id="quantity" placeholder="Quantity (kg)" min="0">
                 <input type="text" name="location" id="location" placeholder="Location" required>
                 <input type="datetime-local" name="pickupTime" id="pickupTime" required>
                 <button type="button" onclick="addWasteRecord()">Add Record</button>
@@ -165,11 +164,12 @@
 
         function addWasteRecord() {
             const wasteType = document.getElementById("wasteType").value;
-            const quantity = parseFloat(document.getElementById("quantity").value);
+            const quantityInput = document.getElementById("quantity").value; // Get the quantity input
+            const quantity = quantityInput ? parseFloat(quantityInput) : 0; // Allow empty input, default to 0
             const location = document.getElementById("location").value;
             const pickupTime = document.getElementById("pickupTime").value;
 
-            if (wasteType && quantity && location && pickupTime) {
+            if (wasteType && location && pickupTime) {
                 records.push({ wasteType, quantity, location, pickupTime });
                 totalWaste += quantity;
                 updateRecordsTable();
