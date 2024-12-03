@@ -55,6 +55,9 @@
             display: none; /* Initially hide the recyclable type selection */
             margin-top: 10px;
         }
+        .create-account {
+            display: none; /* Initially hide the create account section */
+        }
     </style>
 </head>
 <body onload="checkAuthentication()">
@@ -69,7 +72,6 @@
         <a href="#guide">Guide</a>
         <a href="#analytics">Analytics</a>
         <a href="#feedback">Feedback</a>
-        <a href="#" onclick="logout()">Logout</a>
     </nav>
 
     <div class="container" id="mainContent" style="display: none;">
@@ -101,6 +103,18 @@
                 <input type="datetime-local" name="pickupTime" id="pickupTime" required>
                 <button type="button" onclick="addWasteRecord()">Send</button> <!-- Changed button text to "Send" -->
             </form>
+        </section>
+
+        <!-- Create Account Section -->
+        <section class="create-account" id="create-account">
+            <h2>Create Account</h2>
+            <form id="accountForm" onsubmit="createAccount(event)">
+                <input type="text" name="username" id="username" placeholder="Username" required>
+                <input type="password" name="password" id="password" placeholder="Password" required>
+                <input type="text" name="email" id="email" placeholder="Email" required>
+                <button type="submit">Create Account</button>
+            </form>
+            <p>Already have an account? <a href="login.html">Log in here</a></p>
         </section>
 
         <!-- Waste Records Section -->
@@ -159,6 +173,7 @@
 
     <footer>
         <p>&copy; 2024 Waste Management System. All Rights Reserved.</p>
+        <a href="#" onclick="logout()" style="color: white;">Logout</a>
     </footer>
 
     <script>
@@ -171,12 +186,25 @@
                 document.getElementById("mainContent").style.display = "block"; // Show main content
             } else {
                 document.getElementById("loginPrompt").style.display = "block"; // Show login prompt
+                document.getElementById("create-account").style.display = "block"; // Show create account section
             }
         }
 
         function logout() {
             window.localStorage.removeItem("authenticated");
             window.location.href = "login.html"; // Redirect to login page
+        }
+
+        function createAccount(event) {
+            event.preventDefault(); // Prevent form submission
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const email = document.getElementById("email").value;
+
+            // Simulate account creation
+            alert(`Account created successfully! Username: ${username}`);
+            window.localStorage.setItem("authenticated", "true"); // Set authenticated in local storage
+            window.location.href = "index.html"; // Redirect to main page after account creation
         }
 
         function addWasteRecord() {
@@ -188,60 +216,70 @@
             const location = document.getElementById("location").value;
             const pickupTime = document.getElementById("pickupTime").value;
 
-            if (wasteType && location && pickupTime && (wasteType !== "Recyclable" || recyclableMaterials.length > 0)) {
-                // Ensure at least one recyclable material is selected if waste type is "Recyclable"
+            if (wasteType && location && pickupTime) {
                 records.push({ wasteType, recyclableMaterials, quantity, location, pickupTime });
-                totalWaste += quantity;
+                totalWaste += quantity; // Update total waste
+                alert("Waste record added successfully!");
+                clearWasteForm();
                 updateRecordsTable();
-                updateAnalytics();
-                document.getElementById("wasteForm").reset();
-                document.getElementById("recyclableInfo").style.display = "none"; // Hide info after submission
             } else {
-                alert("Please fill all fields before submitting.");
+                alert("Please fill in all required fields.");
             }
+        }
+
+        function clearWasteForm() {
+            document.getElementById("wasteForm").reset(); // Reset the form fields
+            document.getElementById("recyclableInfo").style.display = "none"; // Hide recyclable info
         }
 
         function updateRecordsTable() {
-            const tableBody = document.querySelector("#recordsTable tbody");
-            tableBody.innerHTML = "";
+            const recordsTableBody = document.querySelector("#recordsTable tbody");
+            recordsTableBody.innerHTML = ""; // Clear existing rows
             records.forEach((record, index) => {
-                const materials = record.wasteType === "Recyclable" ? record.recyclableMaterials.join(", ") : "N/A"; // Join selected materials
                 const row = `<tr>
-                    <td>${index + 1}</td>
-                    <td>${record.wasteType}</td>
-                    <td>${materials}</td>
-                    <td>${record.quantity} kg</td>
-                    <td>${record.location}</td>
-                    <td>${new Date(record.pickupTime).toLocaleString()}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
+                                <td>${index + 1}</td>
+                                <td>${record.wasteType}</td>
+                                <td>${record.recyclableMaterials.join(", ")}</td>
+                                <td>${record.quantity}</td>
+                                <td>${record.location}</td>
+                                <td>${record.pickupTime}</td>
+                             </tr>`;
+                recordsTableBody.innerHTML += row; // Add new row
             });
-
-            if (records.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="6" style="text-align: center;">No records available.</td></tr>';
-            }
-        }
-
-        function updateAnalytics() {
-            document.getElementById("totalWaste").innerText = totalWaste;
+            document.getElementById("totalWaste").innerText = totalWaste; // Update total waste displayed
         }
 
         function showRecyclableInfo() {
             const wasteType = document.getElementById("wasteType").value;
-            document.getElementById("recyclableInfo").style.display = wasteType === "Recyclable" ? "block" : "none";
+            const recyclableInfo = document.getElementById("recyclableInfo");
+            recyclableInfo.style.display = wasteType === "Recyclable" ? "block" : "none"; // Show/hide based on waste type
         }
 
         function filterRecords() {
-            const query = document.getElementById("searchBar").value.toLowerCase();
-            const tableRows = document.querySelectorAll("#recordsTable tbody tr");
-            tableRows.forEach(row => {
-                const rowText = row.innerText.toLowerCase();
-                row.style.display = rowText.includes(query) ? "" : "none";
+            const searchValue = document.getElementById("searchBar").value.toLowerCase();
+            const filteredRecords = records.filter(record => 
+                record.wasteType.toLowerCase().includes(searchValue) ||
+                record.location.toLowerCase().includes(searchValue)
+            );
+            const recordsTableBody = document.querySelector("#recordsTable tbody");
+            recordsTableBody.innerHTML = ""; // Clear existing rows
+            filteredRecords.forEach((record, index) => {
+                const row = `<tr>
+                                <td>${index + 1}</td>
+                                <td>${record.wasteType}</td>
+                                <td>${record.recyclableMaterials.join(", ")}</td>
+                                <td>${record.quantity}</td>
+                                <td>${record.location}</td>
+                                <td>${record.pickupTime}</td>
+                             </tr>`;
+                recordsTableBody.innerHTML += row; // Add filtered rows
             });
         }
 
         function submitFeedback() {
-            alert("Thank you for your feedback!");
+            const feedbackText = document.querySelector(".feedback-section textarea").value;
+            alert(`Feedback submitted: ${feedbackText}`); // Simulate feedback submission
+            document.querySelector(".feedback-section textarea").value = ""; // Clear feedback textarea
         }
     </script>
 </body>
