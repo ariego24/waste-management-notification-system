@@ -129,7 +129,7 @@
                         <th>Materials</th>
                         <th>Quantity (kg)</th>
                         <th>Location</th>
-                        <th>Pickup Time</th>
+                        <th>Date and Time</th> <!-- Changed from PICKUP TIME to DATE AND TIME -->
                     </tr>
                 </thead>
                 <tbody>
@@ -219,67 +219,64 @@
             if (wasteType && location && pickupTime) {
                 records.push({ wasteType, recyclableMaterials, quantity, location, pickupTime });
                 totalWaste += quantity; // Update total waste
-                alert("Waste record added successfully!");
-                clearWasteForm();
                 updateRecordsTable();
+                document.getElementById("wasteForm").reset(); // Reset form after submission
             } else {
-                alert("Please fill in all required fields.");
+                alert("Please fill out all fields.");
             }
         }
 
-        function clearWasteForm() {
-            document.getElementById("wasteForm").reset(); // Reset the form fields
-            document.getElementById("recyclableInfo").style.display = "none"; // Hide recyclable info
-        }
-
         function updateRecordsTable() {
-            const recordsTableBody = document.querySelector("#recordsTable tbody");
-            recordsTableBody.innerHTML = ""; // Clear existing rows
+            const tableBody = document.getElementById("recordsTable").getElementsByTagName("tbody")[0];
+            tableBody.innerHTML = ""; // Clear existing rows
+
             records.forEach((record, index) => {
-                const row = `<tr>
-                                <td>${index + 1}</td>
-                                <td>${record.wasteType}</td>
-                                <td>${record.recyclableMaterials.join(", ")}</td>
-                                <td>${record.quantity}</td>
-                                <td>${record.location}</td>
-                                <td>${record.pickupTime}</td>
-                             </tr>`;
-                recordsTableBody.innerHTML += row; // Add new row
+                const row = tableBody.insertRow();
+                row.insertCell(0).innerText = index + 1; // Record number
+                row.insertCell(1).innerText = record.wasteType; // Waste type
+                row.insertCell(2).innerText = record.recyclableMaterials.join(", "); // Recyclable materials
+                row.insertCell(3).innerText = record.quantity.toFixed(2); // Quantity
+                row.insertCell(4).innerText = record.location; // Location
+                row.insertCell(5).innerText = record.pickupTime; // Pickup time
             });
-            document.getElementById("totalWaste").innerText = totalWaste; // Update total waste displayed
+
+            document.getElementById("totalWaste").innerText = totalWaste.toFixed(2); // Update total waste display
+
+            if (records.length === 0) {
+                const emptyRow = tableBody.insertRow();
+                emptyRow.insertCell(0).colSpan = 6;
+                emptyRow.cells[0].innerText = "No records available.";
+            }
         }
 
         function showRecyclableInfo() {
             const wasteType = document.getElementById("wasteType").value;
-            const recyclableInfo = document.getElementById("recyclableInfo");
-            recyclableInfo.style.display = wasteType === "Recyclable" ? "block" : "none"; // Show/hide based on waste type
+            document.getElementById("recyclableInfo").style.display = (wasteType === "Recyclable") ? "block" : "none";
         }
 
         function filterRecords() {
-            const searchValue = document.getElementById("searchBar").value.toLowerCase();
-            const filteredRecords = records.filter(record => 
-                record.wasteType.toLowerCase().includes(searchValue) ||
-                record.location.toLowerCase().includes(searchValue)
-            );
-            const recordsTableBody = document.querySelector("#recordsTable tbody");
-            recordsTableBody.innerHTML = ""; // Clear existing rows
-            filteredRecords.forEach((record, index) => {
-                const row = `<tr>
-                                <td>${index + 1}</td>
-                                <td>${record.wasteType}</td>
-                                <td>${record.recyclableMaterials.join(", ")}</td>
-                                <td>${record.quantity}</td>
-                                <td>${record.location}</td>
-                                <td>${record.pickupTime}</td>
-                             </tr>`;
-                recordsTableBody.innerHTML += row; // Add filtered rows
-            });
+            const filter = document.getElementById("searchBar").value.toLowerCase();
+            const rows = document.getElementById("recordsTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].getElementsByTagName("td");
+                let match = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    if (cells[j].innerText.toLowerCase().includes(filter)) {
+                        match = true;
+                        break;
+                    }
+                }
+
+                rows[i].style.display = match ? "" : "none"; // Show/hide rows based on match
+            }
         }
 
         function submitFeedback() {
-            const feedbackText = document.querySelector(".feedback-section textarea").value;
-            alert(`Feedback submitted: ${feedbackText}`); // Simulate feedback submission
-            document.querySelector(".feedback-section textarea").value = ""; // Clear feedback textarea
+            const feedback = document.querySelector(".feedback-section textarea").value;
+            alert(`Feedback submitted: ${feedback}`);
+            // You can add functionality to save feedback to a database or send it via email
         }
     </script>
 </body>
