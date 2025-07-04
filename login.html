@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Waste Management System</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -30,14 +30,18 @@
             padding: 10px;
             width: 100%;
             font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
         button {
             padding: 10px;
             background-color: #007bff;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
             width: 100%;
+            font-size: 1rem;
         }
         button:hover {
             background-color: #0056b3;
@@ -50,6 +54,11 @@
             color: #007bff;
             text-decoration: none;
         }
+        #error, #createError {
+            color: red;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -60,7 +69,8 @@
             <input type="password" id="password" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
-        <div id="error" style="color: red; text-align: center;"></div>
+        <div id="error"></div>
+
         <div class="link">
             <a href="#" onclick="toggleCreateAccount()">Create Account</a>
         </div>
@@ -68,55 +78,57 @@
         <div id="createAccountContainer" style="display: none; margin-top: 20px;">
             <h2>Create Account</h2>
             <form id="createAccountForm" onsubmit="handleCreateAccount(event)">
-                <input type="text" id="newUsername" placeholder="Username" required>
-                <input type="password" id="newPassword" placeholder="Password" required>
+                <input type="text" id="newUsername" placeholder="New Username" required>
+                <input type="password" id="newPassword" placeholder="New Password" required>
                 <button type="submit">Create Account</button>
             </form>
-            <div id="createError" style="color: red; text-align: center;"></div>
+            <div id="createError"></div>
         </div>
     </div>
 
     <script>
+        // Handle login
         function handleLogin(event) {
-            event.preventDefault(); // Prevent form submission
-            const username = document.getElementById("username").value;
+            event.preventDefault();
+            const username = document.getElementById("username").value.trim();
             const password = document.getElementById("password").value;
 
-            // Check for admin credentials
+            // Check if admin
             if (username === "admin" && password === "admin") {
                 window.localStorage.setItem("authenticated", "true");
-                window.location.href = "index.html"; // Redirect to the main page
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Check from localStorage
+            const storedPassword = window.localStorage.getItem(username);
+            if (storedPassword && storedPassword === password) {
+                window.localStorage.setItem("authenticated", "true");
+                window.location.href = "index.html";
             } else {
-                // Check if the user exists in localStorage
-                const storedPassword = window.localStorage.getItem(username);
-                if (storedPassword && storedPassword === password) {
-                    window.localStorage.setItem("authenticated", "true");
-                    window.location.href = "index.html"; // Redirect to the main page
-                } else {
-                    document.getElementById("error").innerText = "Invalid username or password.";
-                }
+                document.getElementById("error").innerText = "Invalid username or password.";
             }
         }
 
+        // Handle account creation
         function handleCreateAccount(event) {
-            event.preventDefault(); // Prevent form submission
-            const newUsername = document.getElementById("newUsername").value;
+            event.preventDefault();
+            const newUsername = document.getElementById("newUsername").value.trim();
             const newPassword = document.getElementById("newPassword").value;
 
-            // Check if username already exists
             if (window.localStorage.getItem(newUsername)) {
                 document.getElementById("createError").innerText = "Username already exists.";
             } else {
-                // Save the new username and password in localStorage
                 window.localStorage.setItem(newUsername, newPassword);
                 alert("Account created successfully! You can now log in.");
-                toggleCreateAccount(); // Hide create account form
+                toggleCreateAccount(); // Hide form
             }
         }
 
+        // Show/hide create account section
         function toggleCreateAccount() {
-            const createAccountContainer = document.getElementById("createAccountContainer");
-            createAccountContainer.style.display = createAccountContainer.style.display === "none" ? "block" : "none";
+            const container = document.getElementById("createAccountContainer");
+            container.style.display = container.style.display === "none" ? "block" : "none";
         }
     </script>
 </body>
