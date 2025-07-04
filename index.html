@@ -6,13 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoTrack - Waste Management System</title>
     <link rel="stylesheet" href="style.css">
-
-    <!-- 🔐 Redirect to login if not authenticated -->
-    <script>
-        if (localStorage.getItem("authenticated") !== "true") {
-            window.location.href = "login.html";
-        }
-    </script>
 </head>
 <body onload="checkAuthentication()">
     <header>
