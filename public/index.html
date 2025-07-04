@@ -1,0 +1,112 @@
+<!-- UPDATED index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Waste Management System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body onload="checkAuthentication()">
+    <header>
+        <h1>EcoTrack</h1>
+        <p>Accessible Waste Management and Segregation System for Southville 3, Poblacion, Muntinlupa City.</p>
+    </header>
+
+    <nav>
+        <a href="#add-waste">Add Waste</a>
+        <a href="#records">View Records</a>
+        <a href="#guide">Guide</a>
+        <a href="#analytics">Analytics</a>
+        <a href="#feedback">Feedback</a>
+    </nav>
+
+    <div class="container" id="mainContent" style="display: none;">
+        <section id="add-waste">
+            <h2>Add Waste Record</h2>
+            <form id="wasteForm">
+                <select id="wasteType" required onchange="showRecyclableInfo()">
+                    <option value="">Select Waste Type</option>
+                    <option value="Organic">Organic</option>
+                    <option value="Recyclable">Recyclable</option>
+                    <option value="Hazardous">Hazardous</option>
+                    <option value="General">General</option>
+                </select>
+                <div id="recyclableInfo" class="recyclable-info">
+                    <label>Select Recyclable Materials:</label>
+                    <select id="recyclableMaterial" multiple>
+                        <option value="Plastic">Plastic</option>
+                        <option value="Paper">Paper</option>
+                        <option value="Metal">Metal</option>
+                        <option value="Glass">Glass</option>
+                    </select>
+                </div>
+                <input type="number" id="quantity" placeholder="Quantity (kg)" min="0" required>
+                <input type="text" id="location" placeholder="Location" required>
+                <input type="datetime-local" id="pickupTime" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <button type="button" onclick="submitRecord()">Submit Record</button>
+                <button type="button" onclick="sendNotification()">Send Notification</button>
+            </form>
+        </section>
+    </div>
+
+    <script>
+        function checkAuthentication() {
+            const isAuthenticated = localStorage.getItem("authenticated");
+            document.getElementById("mainContent").style.display = (isAuthenticated === "true") ? "block" : "none";
+        }
+
+        function showRecyclableInfo() {
+            const type = document.getElementById("wasteType").value;
+            document.getElementById("recyclableInfo").style.display = (type === "Recyclable") ? "block" : "none";
+        }
+
+        function submitRecord() {
+            const recyclableMaterials = Array.from(document.getElementById("recyclableMaterial").selectedOptions).map(o => o.value);
+            const data = {
+                wasteType: document.getElementById("wasteType").value,
+                recyclableMaterials,
+                quantity: parseFloat(document.getElementById("quantity").value),
+                location: document.getElementById("location").value,
+                pickupTime: document.getElementById("pickupTime").value,
+                email: document.getElementById("email").value
+            };
+
+            fetch("http://localhost:3000/addRecord", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                alert("✅ Record submitted successfully");
+                document.getElementById("wasteForm").reset();
+                showRecyclableInfo();
+            })
+            .catch(() => alert("❌ Failed to submit record"));
+        }
+
+        function sendNotification() {
+            const data = {
+                wasteType: document.getElementById("wasteType").value,
+                quantity: parseFloat(document.getElementById("quantity").value),
+                location: document.getElementById("location").value,
+                pickupTime: document.getElementById("pickupTime").value,
+                email: document.getElementById("email").value
+            };
+
+            fetch("http://localhost:3000/send-notification", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.text())
+            .then(response => {
+                alert("📩 Notification sent successfully");
+            })
+            .catch(() => alert("❌ Failed to send notification"));
+        }
+    </script>
+</body>
+</html>
